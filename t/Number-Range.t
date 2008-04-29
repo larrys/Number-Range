@@ -1,4 +1,4 @@
-use Test::More tests => 23;
+use Test::More tests => 25;
 BEGIN { use_ok('Number::Range') };
 
 ok($range = Number::Range->new("10..100"));
@@ -32,4 +32,7 @@ $range = Number::Range->new("1..100,150..200");
 $rangeformat = $range->range;
 cmp_ok("1..100,150..200", 'eq', $rangeformat);
 ok($range->size == 151);
-
+$range = Number::Range->new("1,3,4,5,6");
+ok($range->range eq "1,3..6");
+$range = Number::Range->new("1,2,3,4,5,6");
+ok($range->range eq "1..6");
