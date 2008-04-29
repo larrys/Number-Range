@@ -1,0 +1,28 @@
+Revision history for Perl extension Number::Range.
+
+0.01  Fri Mar 19 12:02:36 2004
+	- original version; created by h2xs 1.23 with options
+		-AX -n Number::Range
+
+0.02  Sat Mar 20 2004
+	- Added the ability to add and delete ranges from existing
+		range.
+
+0.03  Mon Mar 22, 2004
+	- Allowed inrange() to take a list of tests, and return a
+	  list of true/false if in array context, or single true
+	  if all are true, or a false if one of them is false.
+
+0.04  Tue Mar 23, 2004
+	- Created range() to output either a list of all numbers
+		in the range, or to output a range format, depending
+		on list context.
+
+0.05  Mon May 17, 2004
+	- Cleaned up POD and documentation.
+	- Created the size() method to return number of elements
+		in the range.
+
+0.06 Wed July 21, 2004
+	- Cleaned up POD
+	- Added a SEE ALSO for Number::Tollerant 
