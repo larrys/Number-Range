@@ -10,7 +10,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 sub new {
   my $this = shift;
@@ -107,7 +107,7 @@ sub _delnumbers {
 sub inrange {
   my $self   = shift;
   if (scalar(@_) == 1) {
-    return (exists($self->{_rangehash}{$_[0]})) ? 1 : 0;
+    return (exists($self->{_rangehash}{-+-$_[0]})) ? 1 : 0;
   } else {
     if (wantarray) {
       my @returncodes;
