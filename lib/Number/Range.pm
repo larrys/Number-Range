@@ -267,7 +267,7 @@ Larry Shatzer, Jr., E<lt>larrysh@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004-8 by Larry Shatzer, Jr.
+Copyright (C) 2004-12 by Larry Shatzer, Jr.
 
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
