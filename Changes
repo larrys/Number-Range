@@ -31,3 +31,7 @@ Revision history for Perl extension Number::Range.
 	- Fix #15478, if a range is 1,3,4,5,6 don't return 1..1,3..6
 	  instead, return 1,3..6
 	  Thanks to noodles
+
+0.08 Fri May 18, 2012
+	- Now, for example, inrange('02') will return true for
+	  '1..12' range.
