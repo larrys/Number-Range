@@ -1,4 +1,4 @@
-Number-Range version 0.06
+Number-Range version 0.08
 =========================
 
 Number::Range is an object-oriented interface to test if a number exists in a
@@ -19,7 +19,7 @@ Nothing that is outside of the core Perl modules.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2004 by Larry Shatzer, Jr.
+Copyright (C) 2004-12 by Larry Shatzer, Jr.
 
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
