@@ -122,11 +122,12 @@ sub _testlarge {
     if(!exists($self->{_largeRangehash})) {
         return 0;
     }
-    while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
-        if ($test >= @$range[0]
-            && $test <= @$range[1]) {
-            return 1;
-        }
+    foreach my $rangeID (keys(%{$self->{_largeRangehash}})) {
+      my $range = $self->{_largeRangehash}->{$rangeID};
+      if ($test >= @$range[0]
+        && $test <= @$range[1]) {
+        return 1;
+      }
     }
     return 0;
 }
@@ -193,7 +194,8 @@ sub range {
   if (wantarray) {
     my @range = keys(%{$self->{_rangehash}});
     if(exists($self->{_largeRangehash})) {
-        while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
+        foreach my $rangeID (keys(%{$self->{_largeRangehash}})) {
+          my $range = $self->{_largeRangehash}->{$rangeID};
             if ( @$range[0] > LONG_MAX
                 || @$range[1] > LONG_MAX
                 || ( @$range[1] -  @$range[0]) > LONG_MAX ) {
@@ -230,8 +232,9 @@ sub size {
   my @temp = keys(%{$self->{_rangehash}});;
   my $size = scalar(@temp);
   if(exists($self->{_largeRangehash})) {
-    while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
-      $size += (@$range[1] - @$range[0]);
+    foreach my $rangeID (keys(%{$self->{_largeRangehash}})) {
+      my $range = $self->{_largeRangehash}->{$rangeID};
+      $size += (@$range[1] - @$range[0]) + 1;
     }
   }  
   return $size;
