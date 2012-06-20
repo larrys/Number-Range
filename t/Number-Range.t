@@ -37,3 +37,8 @@ ok($range->range eq "1,3..6");
 $range = Number::Range->new("1,2,3,4,5,6");
 ok($range->range eq "1..6");
 ok($range->inrange("01"));
+# New tests for large range
+$range = Number::Range->new("1..99999999");
+ok($range->inrange("1"));
+ok($range->inrange("99999999"));
+ok($range->size == 100000000);
