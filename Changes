@@ -35,3 +35,6 @@ Revision history for Perl extension Number::Range.
 0.08 Fri May 18, 2012
 	- Now, for example, inrange('02') will return true for
 	  '1..12' range.
+
+0.09 Wed June 20, 2012
+	- Now will handle large ranges.
