@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use warnings::register;
 use Carp;
+use POSIX; # Only needed for max integer size check in large ranges
 
 require Exporter;
 
@@ -17,6 +18,8 @@ sub new {
   my $class = ref($this) || $this;
   my $self = {};
   bless $self, $class;
+  # Max size of range before its stored as a pointer instead of hashed
+  $self->{max_hash_size} = 1000;
   $self->initialize("add", @_);
   return $self;
 }
@@ -59,10 +62,18 @@ sub initialize {
         }
         else {
           if ($type eq "add") {
-            $self->_addnumbers($start .. $end);
+            if(($end - $start) > $self->{max_hash_size}) {
+                $self->_addrange($start, $end);
+            } else {
+                $self->_addnumbers($start .. $end);
+            }
           }
           elsif ($type eq "del") {
-            $self->_delnumbers($start .. $end);
+            if($end - $start > $self->{max_hash_size}) {
+                $self->_delrange($start, $end);
+            } else {
+                $self->_delnumbers($start .. $end);
+            }
           }
           else {
             die "Neither 'add' nor 'del' was passed initialize()";
@@ -82,6 +93,42 @@ sub initialize {
       }
     }
   }
+}
+
+sub set_max_hash_size {
+    my $self = shift;
+    my $val = shift;
+    if($val !~ m/^\d+$/) { return 0; }
+    $self->{max_hash_size} = $val;
+}
+
+sub _addrange {
+    my $self = shift;
+    my $start = shift;
+    my $end = shift;
+    $self->{_largeRangehash}{"$start .. $end"} = [$start, $end];
+}
+
+sub _delrange {
+    my $self = shift;
+    my $start = shift;
+    my $end = shift;
+    delete $self->{_largeRangehash}{"$start .. $end"};
+}
+
+sub _testlarge {
+    my $self = shift;
+    my $test = shift;
+    if(!exists($self->{_largeRangehash})) {
+        return 0;
+    }
+    while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
+        if ($test >= @$range[0]
+            && $test <= @$range[1]) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 sub _addnumbers {
@@ -107,7 +154,12 @@ sub _delnumbers {
 sub inrange {
   my $self   = shift;
   if (scalar(@_) == 1) {
-    return (exists($self->{_rangehash}{-+-$_[0]})) ? 1 : 0;
+    if ( exists($self->{_rangehash}{$_[0]})
+        || $self->_testlarge($_[0])) {
+        return 1;
+    } else {
+        return 0;
+    }
   } else {
     if (wantarray) {
       my @returncodes;
@@ -140,6 +192,18 @@ sub range {
   my $self = shift;
   if (wantarray) {
     my @range = keys(%{$self->{_rangehash}});
+    if(exists($self->{_largeRangehash})) {
+        while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
+            if ( @$range[0] > LONG_MAX
+                || @$range[1] > LONG_MAX
+                || ( @$range[1] -  @$range[0]) > LONG_MAX ) {
+                carp "Range to large to return" if (warnings::enabled());
+                return 0;
+            }
+            
+            @range = (@range, @$range[0]..@$range[1]);
+        }
+    }
     my @sorted = sort {$a <=> $b} @range;
     return @sorted;
   }
@@ -163,8 +227,14 @@ sub range {
 
 sub size {
   my $self = shift;
-  my @temp = $self->range;
-  return scalar(@temp);
+  my @temp = keys(%{$self->{_rangehash}});;
+  my $size = scalar(@temp);
+  if(exists($self->{_largeRangehash})) {
+    while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
+      $size += (@$range[1] - @$range[0]) + 1;
+    }
+  }  
+  return $size;
 }
 
 1;
