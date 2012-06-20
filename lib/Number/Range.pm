@@ -11,7 +11,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 sub new {
   my $this = shift;

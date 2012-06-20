@@ -38,3 +38,6 @@ Revision history for Perl extension Number::Range.
 
 0.09 Wed June 20, 2012
 	- Now will handle large ranges.
+
+0.10 Wed June 20, 2012
+	- Fix bug in 0.09
