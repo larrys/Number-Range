@@ -231,7 +231,7 @@ sub size {
   my $size = scalar(@temp);
   if(exists($self->{_largeRangehash})) {
     while (my ($rangeID, $range) = each(%{$self->{_largeRangehash}})) {
-      $size += (@$range[1] - @$range[0]) + 1;
+      $size += (@$range[1] - @$range[0]);
     }
   }  
   return $size;
