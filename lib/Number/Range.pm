@@ -155,7 +155,7 @@ sub _delnumbers {
 sub inrange {
   my $self   = shift;
   if (scalar(@_) == 1) {
-    if ( exists($self->{_rangehash}{$_[0]})
+    if ( exists($self->{_rangehash}{-+-$_[0]})
         || $self->_testlarge($_[0])) {
         return 1;
     } else {
