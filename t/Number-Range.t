@@ -1,4 +1,4 @@
-use Test::More tests => 26;
+use Test::More tests => 29;
 BEGIN { use_ok('Number::Range') };
 
 ok($range = Number::Range->new("10..100"));
@@ -36,4 +36,9 @@ $range = Number::Range->new("1,3,4,5,6");
 ok($range->range eq "1,3..6");
 $range = Number::Range->new("1,2,3,4,5,6");
 ok($range->range eq "1..6");
-ok($range->inrange("01"));
+ok($range->inrange("1"));
+# New tests for large range
+$range = Number::Range->new("0..99999999");
+ok($range->inrange("1"));
+ok($range->inrange("99999999"));
+ok($range->size == 100000000);
