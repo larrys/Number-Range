@@ -191,9 +191,11 @@ sub delrange {
 
 sub range {
   my $self = shift;
+  my $excludeLarge = shift;
   if (wantarray) {
     my @range = keys(%{$self->{_rangehash}});
-    if(exists($self->{_largeRangehash})) {
+    if(! $excludeLarge
+       && exists($self->{_largeRangehash})) {
         foreach my $rangeID (keys(%{$self->{_largeRangehash}})) {
           my $range = $self->{_largeRangehash}->{$rangeID};
             if ( @$range[0] > LONG_MAX
@@ -202,7 +204,7 @@ sub range {
                 carp "Range to large to return" if (warnings::enabled());
                 return 0;
             }
-            
+
             @range = (@range, @$range[0]..@$range[1]);
         }
     }
@@ -216,7 +218,7 @@ sub range {
     foreach my $current (@range) {
       if ($current == ($previous + 1)) {
         $format =~ s/\.\.$previous$//;
-        $format .= "..$current"; 
+        $format .= "..$current";
       }
       else {
         $format .= ",$current";
@@ -236,8 +238,40 @@ sub size {
       my $range = $self->{_largeRangehash}->{$rangeID};
       $size += (@$range[1] - @$range[0]) + 1;
     }
-  }  
+  }
   return $size;
+}
+
+sub rangeList {
+  my $self = shift;
+  my @return;
+  # Get the range as an array (excluding large ones)
+  my @range = $self->range(1);
+
+  # Get the first element in the array range
+  my $previous = shift(@range);
+  my @sub = ($previous);
+
+  # Process ranges stored as arrays
+  foreach my $current (@range) {
+      if ($current == ($previous + 1)) {
+          $sub[1] = $current;
+      } else {
+          push(@return,[@sub]);
+          @sub = ($current);
+      }
+      $previous = $current;
+  }
+  push(@return,[@sub]);
+
+  # Process ranges stored as large range hash entries
+  if($self->{_largeRangehash}) {
+      while(my @range = each(%{$self->{_largeRangehash}}) ) {
+          push(@return, [int($range[1][0]), int($range[1][1])]);
+      }
+  }
+
+  return @return;
 }
 
 1;
@@ -280,16 +314,16 @@ this, much like Perl's own binary C<..> range operator in list context.
 
 =item new
 
-  $range = Number::Range->new("10..20","25..30");
+  $range = Number::Range->new("10..20","25..30","100");
 
-Creates the range object. It will accept any number of ranges as its 
+Creates the range object. It will accept any number of ranges as its
 input.
 
 =item addrange
 
   $range->addrange("22");
 
-This will also take any number of ranges as input and add them to the 
+This will also take any number of ranges as input and add them to the
 existing range.
 
 =item delrange
@@ -322,6 +356,21 @@ string.
   $size = $range->size;
 
 This will return the total number of entries in the range.
+
+
+=item rangeList
+
+  @rangeList = $range->rangeList;
+
+Returns the range as an array list where each element in the list is an array
+representing the start and stop points of a range. Single element ranges are
+returned as single element arrays with only on indice.
+
+[
+  [10,20],
+  [25,30],
+  [100]
+]
 
 =back
 
