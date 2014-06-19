@@ -41,3 +41,7 @@ Revision history for Perl extension Number::Range.
 
 0.10 Wed June 20, 2012
 	- Fix bug in 0.09
+
+0.11 Wed May 14, 2014
+  - Add in rangeList
+    (https://github.com/larrys/Number-Range/pull/4)
