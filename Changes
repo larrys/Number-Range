@@ -46,6 +46,6 @@ Revision history for Perl extension Number::Range.
   - Add in rangeList
     (https://github.com/larrys/Number-Range/pull/4)
 
-0.11 Thu June 19, 2014
+0.12 Thu June 19, 2014
   - Fix rangeList when only large ranges are used
     (https://github.com/larrys/Number-Range/pull/6)
