@@ -248,21 +248,25 @@ sub rangeList {
   # Get the range as an array (excluding large ones)
   my @range = $self->range(1);
 
-  # Get the first element in the array range
-  my $previous = shift(@range);
-  my @sub = ($previous);
+  # If we have any ranges
+  if (@range) {
 
-  # Process ranges stored as arrays
-  foreach my $current (@range) {
-      if ($current == ($previous + 1)) {
-          $sub[1] = $current;
-      } else {
-          push(@return,[@sub]);
-          @sub = ($current);
-      }
-      $previous = $current;
+    # Get the first element in the array range
+    my $previous = shift(@range);
+    my @sub = ($previous);
+
+    # Process ranges stored as arrays
+    foreach my $current (@range) {
+        if ($current == ($previous + 1)) {
+            $sub[1] = $current;
+        } else {
+            push(@return,[@sub]);
+            @sub = ($current);
+        }
+        $previous = $current;
+    }
+    push(@return,[@sub]);
   }
-  push(@return,[@sub]);
 
   # Process ranges stored as large range hash entries
   if($self->{_largeRangehash}) {
