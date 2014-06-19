@@ -1,4 +1,4 @@
-use Test::More tests => 38;
+use Test::More tests => 40;
 BEGIN { use_ok('Number::Range') };
 
 ok($range = Number::Range->new("10..100"));
@@ -56,3 +56,8 @@ ok($rangeList[2][1] == undef);
 # Large ranges always end up at the end of the list because they are processed seperatly
 ok($rangeList[3][0] == 300);
 ok($rangeList[3][1] == 300000);
+# Test rangeList with only a single large range
+$range = Number::Range->new("300..300000");
+@rangeList = $range->rangeList();
+ok($rangeList[0][0] == 300);
+ok($rangeList[0][1] == 300000);
